@@ -17,64 +17,54 @@ import wx.lib.mixins.listctrl as listmix
 
 import images
 
+
 #---------------------------------------------------------------------------
 
+
+#musicdata = OrderedDict() ##
 musicdata = {
-1 : ("Bad English", "The Price Of Love", "Rock"),
-2 : ("DNA featuring Suzanne Vega", "Tom's Diner", "Rock"),
-3 : ("George Michael", "Praying For Time", "Rock"),
-4 : ("Gloria Estefan", "Here We Are", "Rock"),
-5 : ("Linda Ronstadt", "Don't Know Much", "Rock"),
-6 : ("Michael Bolton", "How Am I Supposed To Live Without You", "Blues"),
-7 : ("Paul Young", "Oh Girl", "Rock"),
-8 : ("Paula Abdul", "Opposites Attract", "Rock"),
-9 : ("Richard Marx", "Should've Known Better", "Rock"),
-10: ("Rod Stewart", "Forever Young", "Rock"),
-11: ("Roxette", "Dangerous", "Rock"),
-12: ("Sheena Easton", "The Lover In Me", "Rock"),
-13: ("Sinead O'Connor", "Nothing Compares 2 U", "Rock"),
-14: ("Stevie B.", "Because I Love You", "Rock"),
-15: ("Taylor Dayne", "Love Will Lead You Back", "Rock"),
-16: ("The Bangles", "Eternal Flame", "Rock"),
-17: ("Wilson Phillips", "Release Me", "Rock"),
-18: ("Billy Joel", "Blonde Over Blue", "Rock"),
-19: ("Billy Joel", "Famous Last Words", "Rock"),
-20: ("Janet Jackson", "State Of The World", "Rock"),
-21: ("Janet Jackson", "The Knowledge", "Rock"),
-22: ("Spyro Gyra", "End of Romanticism", "Jazz"),
-23: ("Spyro Gyra", "Heliopolis", "Jazz"),
-24: ("Spyro Gyra", "Jubilee", "Jazz"),
-25: ("Spyro Gyra", "Little Linda", "Jazz"),
-26: ("Spyro Gyra", "Morning Dance", "Jazz"),
-27: ("Spyro Gyra", "Song for Lorraine", "Jazz"),
-28: ("Yes", "Owner Of A Lonely Heart", "Rock"),
-29: ("Yes", "Rhythm Of Love", "Rock"),
-30: ("Billy Joel", "Lullabye (Goodnight, My Angel)", "Rock"),
-31: ("Billy Joel", "The River Of Dreams", "Rock"),
-32: ("Billy Joel", "Two Thousand Years", "Rock"),
-33: ("Janet Jackson", "Alright", "Rock"),
-34: ("Janet Jackson", "Black Cat", "Rock"),
-35: ("Janet Jackson", "Come Back To Me", "Rock"),
-36: ("Janet Jackson", "Escapade", "Rock"),
-37: ("Janet Jackson", "Love Will Never Do (Without You)", "Rock"),
-38: ("Janet Jackson", "Miss You Much", "Rock"),
-39: ("Janet Jackson", "Rhythm Nation", "Rock"),
-40: ("Cusco", "Dream Catcher", "New Age"),
-41: ("Cusco", "Geronimos Laughter", "New Age"),
-42: ("Cusco", "Ghost Dance", "New Age"),
-43: ("Blue Man Group", "Drumbone", "New Age"),
-44: ("Blue Man Group", "Endless Column", "New Age"),
-45: ("Blue Man Group", "Klein Mandelbrot", "New Age"),
-46: ("Kenny G", "Silhouette", "Jazz"),
-47: ("Sade", "Smooth Operator", "Jazz"),
-48: ("David Arkenstone", "Papillon (On The Wings Of The Butterfly)", "New Age"),
-49: ("David Arkenstone", "Stepping Stars", "New Age"),
-50: ("David Arkenstone", "Carnation Lily Lily Rose", "New Age"),
-51: ("David Lanz", "Behind The Waterfall", "New Age"),
-52: ("David Lanz", "Cristofori's Dream", "New Age"),
-53: ("David Lanz", "Heartsounds", "New Age"),
-54: ("David Lanz", "Leaves on the Seine", "New Age"),
+1 : ("1r", "The Price Of Love", "Rock"),
+2 : ("2r", "Tom's Diner", "Rock"),
+3 : ("3r", "Praying For Time", "Rock"),
+4 : ("4r", "Here We Are", "Rock"),
+5 : ("5r", "Don't Know Much", "Rock"),
+6 : ("6r", "How Am I Supposed To Live Without You", "Blues"),
+7 : ("7r", "Oh Girl", "Rock"),
+8 : ("8r", "Opposites Attract", "Rock"),
+9 : ("9r", "Should've Known Better", "Rock"),
+10: ("10r", "Forever Young", "Rock"),
+11: ("11r", "Dangerous", "Rock"),
+12: ("12r", "The Lover In Me", "Rock"),
 }
+
+
+# lista = [
+#     ['Club,', 'Country,', 'Rating']
+#     ['Man', 'Utd,', 'England,', '7.05']
+#     ['Man', 'City,', 'England,', '8.75']
+#     ['Barcelona,', 'Spain,', '8.72']
+#     ['Bayern', 'Munich,', 'Germany,', '8.75']
+#     ['Liverpool,', 'England,', '8.81']
+# ]
+
+
+import csv ##
+
+def get_dane_from_csv(file_name): ## mozna pozniej zrobic mozliwosc wyboru plikow inicjujacych
+    lista = []
+    slownik = {}
+
+    with open('moj.csv', 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        for row in reader:
+            lista.append(row)
+
+    for wiersz in lista:
+        slownik[wiersz[0]]=wiersz[1:]
+    return slownik 
+
+dane = get_dane_from_csv('moj.csv') ##
+print(dane)
 
 #---------------------------------------------------------------------------
 
@@ -128,8 +118,10 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 
         # Now that the list exists we can init the other base class,
         # see wx/lib/mixins/listctrl.py
-        self.itemDataMap = musicdata
+        self.itemDataMap = dane ##
         listmix.ColumnSorterMixin.__init__(self, 3)
+        
+
         #self.SortListItems(0, True)
 
         self.SetSizer(sizer)
@@ -183,12 +175,13 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
             info.Text = "Genre"
             self.list.InsertColumn(2, info)
 
-        items = musicdata.items()
+        items = dane.items() ##
         for key, data in items:
             index = self.list.InsertItem(self.list.GetItemCount(), data[0], self.idx1)
             self.list.SetItem(index, 1, data[1])
             self.list.SetItem(index, 2, data[2])
-            self.list.SetItemData(index, key)
+            self.list.SetItemData(index, int(key)) ##
+            print(key)
 
         self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
         self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
